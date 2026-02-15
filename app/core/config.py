@@ -11,8 +11,12 @@ class Settings(BaseSettings):
 
     DB_ECHO: bool = False
 
+    @property
     def database_url(self) -> PostgresDsn:
-        return f"postgres+psycopg://{self.DB_USERNAME}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        return f"postgresql+psycopg://{self.DB_USERNAME}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
     class Config:
         env_file = ".env"
+
+
+settings = Settings()
