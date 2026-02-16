@@ -1,5 +1,6 @@
-from app.models.house import House
-from sqlmodel import Session, select, desc, asc
+from sqlmodel import Session, asc, desc, select
+
+from app.models import House
 
 
 def get_active_houses(session: Session):
@@ -20,7 +21,6 @@ def get_filtered_active_houses(session: Session, min_price=None, max_price=None,
     stmt = stmt.order_by(ordering(order_by))
 
     return session.exec(stmt).all()
-
 
 def get_house(session: Session, house_id: int):
     return session.get(House, house_id)

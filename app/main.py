@@ -1,5 +1,7 @@
 from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
+
 from app.api.endpoints.houses import houses_router
 from app.db.init import create_tables
 
