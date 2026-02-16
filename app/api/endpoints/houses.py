@@ -3,6 +3,7 @@ from fastapi import HTTPException
 from app.data import houses_list
 from app.schemas.house import HouseDetailSchema, HouseItemSchema
 from app.api.deps import DBSessionDep
+from app.crud.house import get_active_houses
 from fastapi import Query
 
 from typing import List, Optional, Literal
@@ -24,7 +25,7 @@ async def get_houses(
     order: Optional[SortOrder] = Query("asc"),
 ):
 
-    print(session.exec(text("SELECT 1")))
+    return get_active_houses(session)
 
     houses = [h for h in houses_list if h["active"]]
 
