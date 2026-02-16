@@ -1,14 +1,12 @@
 from fastapi import APIRouter
 from fastapi import HTTPException
-from app.data import houses_list
 from app.schemas.house import HouseDetailSchema, HouseItemSchema
 from app.api.deps import DBSessionDep
-from app.crud.house import get_active_houses
+from app.crud import house as crud_house
 from fastapi import Query
 
 from typing import List, Optional, Literal
 
-from sqlmodel import text
 
 houses_router = APIRouter(prefix="/houses", tags=["houses"])
 
@@ -25,26 +23,15 @@ async def get_houses(
     order: Optional[SortOrder] = Query("asc"),
 ):
 
-    return get_active_houses(session)
-
-    houses = [h for h in houses_list if h["active"]]
-
-    if min_price is not None:
-        houses = [h for h in houses if h["price"] >= min_price]
-
-    if max_price is not None:
-        houses = [h for h in houses if h["price"] <= max_price]
-
-    # Сортировка
-    reverse = order == "desc"
-    houses.sort(key=lambda h: h[order_by], reverse=reverse)
-
-    return houses
+    return crud_house.get_filtered_active_houses(
+        session, min_price=min_price, max_price=max_price, order_by=order_by, order=order
+    )
 
 
 @houses_router.get("/{house_id}", response_model=HouseDetailSchema)
-async def get_house_detail(house_id: int):
-    for house in houses_list:
-        if house["id"] == house_id:
-            return house
-    raise HTTPException(status_code=404, detail="House not found")
+async def get_house(session: DBSessionDep, house_id: int):
+    house = crud_house.get_house(session, house_id)
+    if not house:
+        raise HTTPException(status_code=404, detail="House not found")
+
+    return house
