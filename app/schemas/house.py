@@ -1,22 +1,23 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class HouseFullSchema(BaseModel):
-    id: int
-    name: str
-    description: str
-    price: int
-    active: bool
+    id: int = Field(description="ID объявления")
+    name: str = Field(description="Название")
+    description: str = Field(description="Описание")
+    price: int = Field(description="Стоимость")
+    active: bool = Field(description="Объявление активно")
+
 
 
 class HouseDetailSchema(BaseModel):
-    id: int
-    name: str
-    description: str
-    price: int
+    id: int = Field(description="ID объявления")
+    name: str = Field(description="Название")
+    description: str = Field(description="Описание")
+    price: int = Field(description="Стоимость")
 
 
 class HouseItemSchema(BaseModel):
-    id: int
-    name: str
-    price: int
+    id: int = Field(description="ID объявления")
+    name: str = Field(description="Название")
+    price: int = Field(description="Стоимость")
