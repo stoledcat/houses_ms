@@ -1,13 +1,10 @@
-from fastapi import APIRouter
-from fastapi import HTTPException
-from fastapi import Query
+from typing import List, Literal, Optional
 
-from typing import List, Optional, Literal
+from fastapi import APIRouter, HTTPException, Query
 
-from app.schemas.house import HouseDetailSchema, HouseItemSchema
 from app.api.deps import DBSessionDep
 from app.crud import house as crud_house
-
+from app.schemas.house import HouseDetailSchema, HouseItemSchema
 
 houses_router = APIRouter(prefix="/houses", tags=["houses"])
 
