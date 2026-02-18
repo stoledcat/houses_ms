@@ -50,7 +50,7 @@ async def get_house(session: DBSessionDep, house_id: int):
     """
     house = crud_house.get_house(session, house_id)
 
-    if not house or not house.active:
+    if not house:
         raise HTTPException(status_code=404, detail="House not found")
 
     return house
