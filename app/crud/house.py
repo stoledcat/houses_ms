@@ -1,5 +1,4 @@
 from sqlmodel import Session, asc, desc, select
-from sqlalchemy.exc import NoResultFound
 from app.models import House
 
 
@@ -24,9 +23,5 @@ def get_filtered_active_houses(session: Session, min_price=None, max_price=None,
 
 
 def get_house(session: Session, house_id: int):
-    try:
-        stmt = select(House).where(House.active, House.id == house_id)
-        house = session.exec(stmt).one()
-    except NoResultFound:
-        house = None
-    return house
+    stmt = select(House).where(House.active, House.id == house_id)
+    return session.exec(stmt).first()
