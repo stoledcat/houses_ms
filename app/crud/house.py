@@ -22,5 +22,7 @@ def get_filtered_active_houses(session: Session, min_price=None, max_price=None,
 
     return session.exec(stmt).all()
 
+
 def get_house(session: Session, house_id: int):
-    return session.get(House, house_id)
+    stmt = select(House).where(House.active).where(House.id == house_id)
+    return session.exec(stmt).first()
