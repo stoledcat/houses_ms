@@ -8,8 +8,11 @@ def get_active_houses(session: Session):
     return session.exec(stmt).all()
 
 
-def get_filtered_active_houses(session: Session, min_price=None, max_price=None, order_by="id", order="asc"):
+def get_filtered_active_houses(session: Session, search=None, min_price=None, max_price=None, order_by="id", order="asc"):
     stmt = select(House).where(House.active)
+
+    if search:
+        stmt = stmt.where(House.name.icontains(search))
 
     if min_price:
         stmt = stmt.where(House.price >= min_price)
