@@ -17,7 +17,7 @@ SortOrder = Literal["asc", "desc"]
 
 
 @houses_router.get(
-    "/",
+    "",
     response_model=List[HouseItemSchema],
     summary="Возвращает дома",
     description="Возвращает список активных домов",
