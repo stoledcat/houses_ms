@@ -34,9 +34,10 @@ async def get_houses(
     Функция выводит данные всех активных объявлений
     """
 
-    return crud_house.get_filtered_active_houses(
+    houses = await crud_house.get_filtered_active_houses(
         session, min_price=min_price, max_price=max_price, order_by=order_by, order=order
     )
+    return houses
 
 
 @houses_router.get("/{house_id}", response_model=HouseDetailSchema, summary="Возвращает дом")
@@ -48,7 +49,7 @@ async def get_house(session: DBSessionDep, house_id: int):
        - **description**: короткое описание дома
        - **price**: цена дома в рублях
     """
-    house = crud_house.get_house(session, house_id)
+    house = await crud_house.get_house(session, house_id)
 
     if not house:
         raise HTTPException(status_code=404, detail="House not found")
