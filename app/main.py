@@ -3,13 +3,15 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from app.api.endpoints.houses import houses_router
-from app.db.init import create_tables
+from app.db.session import async_engine
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    create_tables()
+    print("Начало")
+
     yield
+    async_engine.dispose()
 
 
 app = FastAPI(lifespan=lifespan, title="API домов", description="Микросервис для управления домами")

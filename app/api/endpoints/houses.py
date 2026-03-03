@@ -1,10 +1,13 @@
-from typing import List, Literal, Optional
+from fastapi import APIRouter
+from fastapi import HTTPException
+from fastapi import Query
 
-from fastapi import APIRouter, HTTPException, Query
+from typing import List, Optional, Literal
 
+from app.schemas.house import HouseDetailSchema, HouseItemSchema
 from app.api.deps import DBSessionDep
 from app.crud import house as crud_house
-from app.schemas.house import HouseDetailSchema, HouseItemSchema
+
 
 houses_router = APIRouter(prefix="/houses", tags=["houses"])
 
@@ -14,7 +17,7 @@ SortOrder = Literal["asc", "desc"]
 
 
 @houses_router.get(
-    "/",
+    "",
     response_model=List[HouseItemSchema],
     summary="Возвращает дома",
     description="Возвращает список активных домов",
@@ -25,15 +28,14 @@ async def get_houses(
     max_price: Optional[int] = Query(None, ge=0, title="Максимальная цена"),
     order_by: Optional[SortField] = Query("id", title="Поля сортировки", description="Допустимые значения: id, price, name"),
     order: Optional[SortOrder] = Query("asc", title="Порядок сортировки", description="Допустимые значения: asc, desc"),
-    search: Optional[str] = Query(None, min_length=3, description="Поиск по названию (минимум 3 символа)"),
+    search: Optional[str] = Query(None, min_length=3, description="Поисковый запрос (минимум 3 символа)"),
 ):
     """
     Функция выводит данные всех активных объявлений
     """
-    print(search)
-    return crud_house.get_filtered_active_houses(
-        session, search=search, min_price=min_price, max_price=max_price, order_by=order_by, order=order
-    )
+
+    houses = await crud_house.get_filtered_active_houses(session, min_price=min_price, max_price=max_price, order_by=order_by, order=order)
+    return houses
 
 
 @houses_router.get("/{house_id}", response_model=HouseDetailSchema, summary="Возвращает дом")
@@ -45,7 +47,7 @@ async def get_house(session: DBSessionDep, house_id: int):
        - **description**: короткое описание дома
        - **price**: цена дома в рублях
     """
-    house = crud_house.get_house(session, house_id)
+    house = await crud_house.get_house(session, house_id)
 
     if not house:
         raise HTTPException(status_code=404, detail="House not found")
