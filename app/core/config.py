@@ -1,19 +1,46 @@
 from pydantic import PostgresDsn
 from pydantic_settings import BaseSettings
+from pydantic import PostgresDsn, RedisDsn
 
 
 class Settings(BaseSettings):
+    # Postgresql
     DB_USERNAME: str
     DB_PASSWORD: str
     DB_HOST: str = "localhost"
     DB_PORT: int = 5432
     DB_NAME: str
-
     DB_ECHO: bool = False
+
+    # Redis
+    REDIS_USERNAME: str = "default"
+    REDIS_PASSWORD: str = ""
+    REDIS_HOST: str = "localhost"
+    REDIS_PORT: int = 6379
+    REDIS_DB: str = "0"
 
     @property
     def database_url(self) -> PostgresDsn:
-        return f"postgresql+psycopg://{self.DB_USERNAME}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        return PostgresDsn.build(
+            scheme="postgresql+psycopg",
+            username=self.DB_USERNAME,
+            password=self.DB_PASSWORD,
+            host=self.DB_HOST,
+            port=self.DB_PORT,
+            path=self.DB_NAME,
+        )
+
+    @property
+    def redis_url(self) -> RedisDsn:
+        return RedisDsn.build(
+            scheme="redis",
+            username=self.REDIS_USERNAME,
+            password=self.REDIS_PASSWORD,
+            host=self.REDIS_HOST,
+            port=self.REDIS_PORT,
+            path=self.REDIS_DB,
+        )
+
 
     class Config:
         env_file = ".env"
