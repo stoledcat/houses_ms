@@ -5,7 +5,7 @@
 alembic init alembic
 ```
 
-Создать первую миграцию
+Создать миграцию
 ```bash
 alembic revision --autogenerate -m "create initial tables"
 ```
