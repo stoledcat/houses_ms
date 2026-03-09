@@ -10,20 +10,18 @@ def get_active_houses(session: AsyncSession) -> Sequence[House]:
     return session.execute(stmt).all()
 
 
-async def get_filtered_active_houses(
-    session: AsyncSession, search=None, min_price=None, max_price=None, order_by="id", order="asc"
-):
+async def get_filtered_active_houses(session: AsyncSession, filters=None, order_by="id", order="asc"):
     stmt = select(House).where(House.active)
 
-    if search:
+    if filters.search:
         # stmt = stmt.where(House.description.icontains(search) | House.name.icontains(search))
-        stmt = stmt.where(or_(House.description.icontains(search), House.name.icontains(search)))
+        stmt = stmt.where(or_(House.description.icontains(filters.search), House.name.icontains(filters.search)))
 
-    if min_price:
-        stmt = stmt.where(House.price >= min_price)
+    if filters.min_price is not None:
+        stmt = stmt.where(House.price >= filters.min_price)
 
-    if max_price:
-        stmt = stmt.where(House.price <= max_price)
+    if filters.max_price is not None:
+        stmt = stmt.where(House.price <= filters.max_price)
 
     ordering = desc if order == "desc" else asc
     stmt = stmt.order_by(ordering(order_by))
