@@ -2,13 +2,12 @@ from fastapi import APIRouter
 from fastapi import HTTPException
 from fastapi import Query
 from fastapi import Request
-from fastapi import Depends
 from typing import List, Optional, Literal
 
 from app.schemas.house import HouseDetailSchema, HouseItemSchema
 from app.api.deps import DBSessionDep
+from app.api.dependencies.houses import HouseFiltersDep
 from app.crud import house as crud_house
-from app.schemas.filters import HouseFilters
 
 
 houses_router = APIRouter(prefix="/houses", tags=["houses"])
@@ -27,7 +26,7 @@ SortOrder = Literal["asc", "desc"]
 async def get_houses(
     session: DBSessionDep,
     request: Request,
-    filters: HouseFilters = Depends(),
+    filters: HouseFiltersDep,
     order_by: Optional[SortField] = Query("id", title="Поля сортировки", description="Допустимые значения: id, price, name"),
     order: Optional[SortOrder] = Query("asc", title="Порядок сортировки", description="Допустимые значения: asc, desc"),
 ):
